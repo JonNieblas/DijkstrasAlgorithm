@@ -1,0 +1,49 @@
+1. Ask user for num of routers, n. must be n >= 2
+2. Place costs between routers in a file called topo.txt
+	* Parse line by line
+	* validate each router number
+		* must be between 0 and n-1
+	* validate cost is positive
+	* only one line need per router pair
+		* (ex: 3 0 10 is good, don't need 0 3 10)
+	* same directory as program
+2.1 If an invalid number is detected:
+	* close the txt file
+	* keep asking for the name of the cost input file
+		* until all numbers are checked to be valid
+	* record the cost info in the cost matrix
+3. Implement Dijkstra's alg to build up the shortest-path tree
+	* rooted at source router V0
+	* Display this at the end of initialization and each iteration of the Loop:
+	The set N'
+	The set Y'
+	D(i) for each i between 1 and n-1
+	p(i) for each i between 1 and n-1
+4. Use shortest path tree resulted from Dijkstra to build up forwarding table for router V0
+	* display the forwarding table w/ this format
+	Destination:		Link:
+	V1		(V0, ...)
+	V2		(V0, ...)
+	...		
+	Vn-1		(V0, ...)
+
+Part 2: Test program
+
+Notes for algorithm:
+
+Try every single combination of the current num being tested (starting at 0) and another num within n-1.
+If there is nothing at that combination in the hash map, skip and move on to the next.
+Keep track of each shortest way to next node.
+
+First find shortest path from 0 to 1, then hold it in matrix
+Then find shortest path from 0 to 3, and so on, skipping numbers
+that are not "adjacent" and giving them infinity as a value (or a really high number) (which topo.txt only lists adjacent node costs).
+Add shortest path forward out of 0 to Y'.
+Add 0 to N' (aka settled Nodes)
+D(i) = shortest path costs added up thus far to i.
+NOTE: create hashmap of D(i)'s, comparing shortest paths thus far. This will be important
+for keeping track of the shortest path forward.
+P(i) = previous node before this one, tracing back to the original node
+Then for the next nodes (nodes directly adjacent to 0), find the costs to adjacent nodes and hold them, and so on.
+Until the final node has been evaluated.
+Then, create a table listing each node, the shortest path forward to each node.

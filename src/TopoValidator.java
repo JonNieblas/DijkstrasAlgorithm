@@ -1,4 +1,5 @@
 import java.io.*;
+import java.util.HashMap;
 
 public class TopoValidator {
 
@@ -8,6 +9,7 @@ public class TopoValidator {
     private int lineCount;
     private int manualEntryCounter = 0;
     private String fileName = "topo.txt";
+    private HashMap<String, Integer> costMatrix = new HashMap<>();
 
     public int GetNumOfRouters() throws IOException{
         int n = 0;
@@ -52,7 +54,7 @@ public class TopoValidator {
             //pass off to dijkstra's algorithm
             fileReader.close();//for now, will be elsewhere later
         } catch (FileNotFoundException ex){
-            System.out.println("File does not exist.");
+            System.out.println(fileName + " does not exist.");
             RestartFileRead();
         }
     }
@@ -60,6 +62,7 @@ public class TopoValidator {
     public void RestartFileRead() throws IOException{
         System.out.print("Please input the name of the cost input file: ");
         fileName = sysIn.readLine();
+        lineCount = 0;
         manualEntryCounter = 0;
         ValidateTopoTxt();
     }
@@ -98,6 +101,7 @@ public class TopoValidator {
     }
 
     public void AddNumsToMatrix(int r1, int r2, int cost){
+        costMatrix.put(r1 + "-" + r2, cost);
         System.out.println(r1 + " " + r2 + " " + cost);
     }
 }
