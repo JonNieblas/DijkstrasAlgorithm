@@ -6,7 +6,6 @@ public class TopoValidator {
     private int numOfRouters;
     private int[] numsInLine;
     private int lineCount;
-    private int[] costMatrix;
     private int manualEntryCounter = 0;
     private String fileName = "topo.txt";
 
@@ -21,17 +20,15 @@ public class TopoValidator {
     }
 
     public void ExtractNumsInLine(String line){
-        String[] numberSeparator = line.split("\t");
-        if(numberSeparator.length != 2){
+        int counter = 0;
+        String[] numberSeparator = line.split("\\t");
+        numsInLine = new int[numberSeparator.length];
+        for (String i : numberSeparator) {
+            numsInLine[counter] = Integer.parseInt(i);
+            counter++;}
+        if(counter < 3 || counter > 3){
             System.out.println("Incorrect number of values at line " + lineCount);
-            manualEntryCounter++;
-        } else {
-            numsInLine = new int[numberSeparator.length];
-            for (int i = 0; i < 3; i++) {
-                String currentNum = numberSeparator[i];
-                numsInLine[i] = Integer.parseInt(currentNum);
-            }
-        }
+            manualEntryCounter++; }
     }
 
     public void ValidateTopoTxt() throws IOException{
@@ -53,6 +50,7 @@ public class TopoValidator {
                 RestartFileRead();
             }
             //pass off to dijkstra's algorithm
+            fileReader.close();//for now, will be elsewhere later
         } catch (FileNotFoundException ex){
             System.out.println("File does not exist.");
             RestartFileRead();
@@ -74,7 +72,7 @@ public class TopoValidator {
             int currentNum = numsInLine[i];
             if(i < 2) {
                 if ((currentNum > numOfRouters - 1) || (currentNum < 0)) {
-                    System.out.println("Invalid router value at line " + lineCount);
+                    System.out.println("Invalid router value " + currentNum + " at line " + lineCount);
                     manualEntryCounter++;
                     break;
                 } else{
@@ -100,6 +98,6 @@ public class TopoValidator {
     }
 
     public void AddNumsToMatrix(int r1, int r2, int cost){
-
+        System.out.println(r1 + " " + r2 + " " + cost);
     }
 }
