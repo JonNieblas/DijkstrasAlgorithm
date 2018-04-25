@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.HashMap;
 
-public class TopoValidator {
+public class NodeFactory {
 
     BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
     private int numOfRouters;
@@ -9,16 +9,10 @@ public class TopoValidator {
     private int lineCount;
     private int manualEntryCounter = 0;
     private String fileName = "topo.txt";
-    private HashMap<String, Integer> costMatrix = new HashMap<>();
+    private HashMap<String, Integer> costMap = new HashMap<>();
 
-    public int GetNumOfRouters() throws IOException{
-        int n = 0;
-        while(n < 2){
-            System.out.println("Please enter the number of numOfRouters (must be >= 2): ");
-            n = Integer.parseInt(sysIn.readLine());
-        }
-        //initiate costMatrix;
-        return n;
+    public NodeFactory(int numFromUser){
+        this.numOfRouters = numFromUser;
     }
 
     public void ExtractNumsInLine(String line){
@@ -34,7 +28,6 @@ public class TopoValidator {
     }
 
     public void ValidateTopoTxt() throws IOException{
-        numOfRouters = GetNumOfRouters();
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -51,7 +44,6 @@ public class TopoValidator {
             if(manualEntryCounter > 0){
                 RestartFileRead();
             }
-            //pass off to dijkstra's algorithm
             fileReader.close();//for now, will be elsewhere later
         } catch (FileNotFoundException ex){
             System.out.println(fileName + " does not exist.");
@@ -101,7 +93,14 @@ public class TopoValidator {
     }
 
     public void AddNumsToMatrix(int r1, int r2, int cost){
-        costMatrix.put(r1 + "-" + r2, cost);
-        System.out.println(r1 + " " + r2 + " " + cost);
+        costMap.put(r1 + "-" + r2, cost);
+    }
+
+    public int getNumOfRouters() {
+        return numOfRouters;
+    }
+
+    public HashMap<String, Integer> getCostMap() {
+        return costMap;
     }
 }

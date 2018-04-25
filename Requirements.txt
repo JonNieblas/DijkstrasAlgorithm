@@ -39,7 +39,7 @@ First find shortest path from 0 to 1, then hold it in matrix
 Then find shortest path from 0 to 3, and so on, skipping numbers
 that are not "adjacent" and giving them infinity as a value (or a really high number) (which topo.txt only lists adjacent node costs).
 Add shortest path forward out of 0 to Y'.
-Add 0 to N' (aka settled Nodes)
+Add 0 to N' (aka settled NodeFactory)
 D(i) = shortest path costs added up thus far to i.
 NOTE: create hashmap of D(i)'s, comparing shortest paths thus far. This will be important
 for keeping track of the shortest path forward.
