@@ -9,6 +9,7 @@ public class DijkstrasAlgorithm {
     private Set edgesInShortestPath;//Y'
     private HashMap<Integer, Integer> currentPathCostMatrix;//D(i)
     private HashMap<Integer, Integer> predecessorNodeMatrix;//p(i)
+    private HashMap<Integer, String> edgeHistory = new HashMap<>();
 
     public DijkstrasAlgorithm(NodeFactory nodes){
         this.nodes = nodes;
@@ -17,7 +18,6 @@ public class DijkstrasAlgorithm {
         currentPathCostMatrix = new HashMap<>();
         predecessorNodeMatrix = new HashMap<>();
     }
-
 
     public void Initialization(){
         pathsKnown = new HashSet();
@@ -33,11 +33,12 @@ public class DijkstrasAlgorithm {
                 predecessorNodeMatrix.put(i, 9999);
             }
         }
-        IntermediateResults();
+        IntermediateResults(0);
     }
 
-    public void IntermediateResults(){
+    public void IntermediateResults(int loopNum){
         System.out.println("");
+        System.out.println("Loop " + loopNum + " Results: ");
         System.out.println("The set N' contains: " + pathsKnown.toString());
         System.out.println("The set Y' contains: " + edgesInShortestPath.toString());
         for(int node = 1; node < numOfNodes; node++){
@@ -52,29 +53,49 @@ public class DijkstrasAlgorithm {
             if(!pathsKnown.contains("V" + currentNode)){
                 FindShortestPath(currentNode);
             }
-            IntermediateResults();
+            UpdateEdges(currentNode);
+            pathsKnown.add("V" + currentNode);
+            UpdatePreviousAdjacentNodes(currentNode);
+            IntermediateResults(currentNode);
         }
     }
 
     public void FindShortestPath(int currentNode){
         for(int adjacentNode = 0; adjacentNode < numOfNodes; adjacentNode++){
             if(costMatrix[currentNode][adjacentNode] != 0){
-                int currentCost = currentPathCostMatrix.get(adjacentNode) + costMatrix[currentNode][adjacentNode];
-                int oldCost = currentPathCostMatrix.get(currentNode);
-                if((currentCost <= oldCost) && (oldCost != 0)){
-                    currentPathCostMatrix.put(currentNode, currentCost);
-                    predecessorNodeMatrix.put(currentNode, adjacentNode);
+                FindBestAdjacentNode(currentNode, adjacentNode);
+            }
+        }
+    }
+
+    public void FindBestAdjacentNode(int currentNode, int adjacentNode){
+        int currentCost = currentPathCostMatrix.get(adjacentNode) + costMatrix[currentNode][adjacentNode];
+        int oldCost = currentPathCostMatrix.get(currentNode);
+        if((currentCost <= oldCost) && (oldCost != 0)){
+            currentPathCostMatrix.put(currentNode, currentCost);
+            predecessorNodeMatrix.put(currentNode, adjacentNode);
+        }
+    }
+
+    public void UpdateEdges(int currentNode){
+        String edge = "(" + predecessorNodeMatrix.get(currentNode) + "," + currentNode + ")";
+        String reverseEdge =  "(" + currentNode + "," + predecessorNodeMatrix.get(currentNode) + ")";
+        if((edgeHistory.get(currentNode) != null) && (!edgeHistory.get(currentNode).equals(edge))
+                && (!edgeHistory.get(currentNode).equals(reverseEdge))){
+            edgesInShortestPath.remove(edgeHistory.get(currentNode));
+        }
+        edgeHistory.put(currentNode, edge);
+        edgesInShortestPath.add(edge);
+    }
+
+    public void UpdatePreviousAdjacentNodes(int currentNode){
+        for(int i = 1; i < numOfNodes; i++){
+            if(pathsKnown.contains("V" + i)){
+                if(costMatrix[i][currentNode] != 0){
+                    FindShortestPath(i);
+                    UpdateEdges(i);
                 }
             }
         }
-        UpdateAdjacentNodes();
-        edgesInShortestPath.add("(" + predecessorNodeMatrix.get(currentNode) + "," + currentNode + ")");
-        pathsKnown.add("V" + currentNode);
-    }
-
-    public void UpdateAdjacentNodes(){
-        //after the shortest path is found, nodes previously examined
-        //need to be re-examined to include the new branch found
-        //previous edge must be removed
     }
 }
