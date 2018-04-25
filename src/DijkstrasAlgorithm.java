@@ -52,8 +52,8 @@ public class DijkstrasAlgorithm {
         for(int currentNode = 1; currentNode < numOfNodes; currentNode++){
             if(!pathsKnown.contains("V" + currentNode)){
                 FindShortestPath(currentNode);
+                UpdateEdges(currentNode);
             }
-            UpdateEdges(currentNode);
             pathsKnown.add("V" + currentNode);
             UpdatePreviousAdjacentNodes(currentNode);
             IntermediateResults(currentNode);
@@ -96,6 +96,12 @@ public class DijkstrasAlgorithm {
                     UpdateEdges(i);
                 }
             }
+        }
+    }
+
+    public void BuildForwardingTable(){
+        for(int destinationNode = 1; destinationNode < numOfNodes; destinationNode++){
+
         }
     }
 }
