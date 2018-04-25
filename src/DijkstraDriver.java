@@ -12,14 +12,13 @@ public class DijkstraDriver {
         BufferedReader sysIn = new BufferedReader(new InputStreamReader(System.in));
         int numOfRouters = 0;
         while(numOfRouters < 2){
-            System.out.println("Please enter the number of numOfRouters (must be >= 2): ");
+            System.out.println("Please enter the number of routers (must be >= 2): ");
             numOfRouters = Integer.parseInt(sysIn.readLine());
         }
         NodeFactory nodes = new NodeFactory(numOfRouters);
         nodes.ValidateTopoTxt();
 
-        ShortestPathFinder spf1 = new ShortestPathFinder(nodes);
-        spf1.FindBestPath(0, 3);//currently testing to find best path to node 3
-
+        DijkstrasAlgorithm spf1 = new DijkstrasAlgorithm(nodes);
+        spf1.DijkstraLoop();
     }
 }

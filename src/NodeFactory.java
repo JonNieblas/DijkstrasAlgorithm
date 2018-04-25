@@ -1,5 +1,4 @@
 import java.io.*;
-import java.util.HashMap;
 
 public class NodeFactory {
 
@@ -9,31 +8,34 @@ public class NodeFactory {
     private int lineCount;
     private int manualEntryCounter = 0;
     private String fileName = "topo.txt";
-    private HashMap<String, Integer> costMap = new HashMap<>();
+    private int[][] costMatrix;
 
-    public NodeFactory(int numFromUser){
+    public NodeFactory(int numFromUser) {
         this.numOfRouters = numFromUser;
+        this.costMatrix = new int[numFromUser][numFromUser];
     }
 
-    public void ExtractNumsInLine(String line){
+    public void ExtractNumsInLine(String line) {
         int counter = 0;
         String[] numberSeparator = line.split("\\t");
         numsInLine = new int[numberSeparator.length];
         for (String i : numberSeparator) {
             numsInLine[counter] = Integer.parseInt(i);
-            counter++;}
-        if(counter < 3 || counter > 3){
+            counter++;
+        }
+        if (counter < 3 || counter > 3) {
             System.out.println("Incorrect number of values at line " + lineCount);
-            manualEntryCounter++; }
+            manualEntryCounter++;
+        }
     }
 
-    public void ValidateTopoTxt() throws IOException{
+    public void ValidateTopoTxt() throws IOException {
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             String currentLine;
-            while((currentLine = bufferedReader.readLine()) != null){
-                if(manualEntryCounter > 0){
+            while ((currentLine = bufferedReader.readLine()) != null) {
+                if (manualEntryCounter > 0) {
                     fileReader.close();
                     break;
                 }
@@ -41,17 +43,17 @@ public class NodeFactory {
                 ExtractNumsInLine(currentLine);
                 ValidateRouterNums();
             }
-            if(manualEntryCounter > 0){
+            if (manualEntryCounter > 0) {
                 RestartFileRead();
             }
-            fileReader.close();//for now, will be elsewhere later
-        } catch (FileNotFoundException ex){
+            fileReader.close();
+        } catch (FileNotFoundException ex) {
             System.out.println(fileName + " does not exist.");
             RestartFileRead();
         }
     }
 
-    public void RestartFileRead() throws IOException{
+    public void RestartFileRead() throws IOException {
         System.out.print("Please input the name of the cost input file: ");
         fileName = sysIn.readLine();
         lineCount = 0;
@@ -59,48 +61,49 @@ public class NodeFactory {
         ValidateTopoTxt();
     }
 
-    public void ValidateRouterNums(){
+    public void ValidateRouterNums() {
         int routerOne = 0;
         int routerTwo = 0;
         int cost = 0;
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             int currentNum = numsInLine[i];
-            if(i < 2) {
+            if (i < 2) {
                 if ((currentNum > numOfRouters - 1) || (currentNum < 0)) {
                     System.out.println("Invalid router value " + currentNum + " at line " + lineCount);
                     manualEntryCounter++;
                     break;
-                } else{
-                    if(i == 0){
+                } else {
+                    if (i == 0) {
                         routerOne = currentNum;
-                    } else{
+                    } else {
                         routerTwo = currentNum;
                     }
                 }
-            } else{
-                if (currentNum < 1){
+            } else {
+                if (currentNum < 1) {
                     System.out.println("Invalid cost value at line " + lineCount);
                     manualEntryCounter++;
                     break;
-                } else{
+                } else {
                     cost = currentNum;
                 }
             }
         }
-        if(manualEntryCounter == 0) {
+        if (manualEntryCounter == 0) {
             AddNumsToMatrix(routerOne, routerTwo, cost);
         }
     }
 
-    public void AddNumsToMatrix(int r1, int r2, int cost){
-        costMap.put(r1 + "-" + r2, cost);
+    public void AddNumsToMatrix(int r1, int r2, int cost) {
+        costMatrix[r1][r2] = cost;
+        costMatrix[r2][r1] = cost;
     }
 
     public int getNumOfRouters() {
         return numOfRouters;
     }
 
-    public HashMap<String, Integer> getCostMap() {
-        return costMap;
+    public int[][] getCostMatrix() {
+        return costMatrix;
     }
 }
