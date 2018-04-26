@@ -18,7 +18,7 @@ public class NodeFactory {
     private int manualEntryCounter = 0;
     private String fileName = "topo.txt";
     private int[][] costMatrix;
-    private ArrayList<Integer> topoRegisters;
+    private int maxRouterNum = 0;
 
     public void CreateMatrix() throws IOException{
         while(numOfRouters < 2){
@@ -47,7 +47,6 @@ public class NodeFactory {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
             CreateMatrix();
-            topoRegisters = new ArrayList<>();
             String currentLine;
             while ((currentLine = bufferedReader.readLine()) != null) {
                 if (manualEntryCounter > 0) {
@@ -70,9 +69,10 @@ public class NodeFactory {
     }
 
     public void IncorrectUserGivenRegisters(){
-        if(!topoRegisters.contains(numOfRouters-1)){
+        if((maxRouterNum + 1) < numOfRouters){
             System.out.println("Router number exceeds max number of routers in the file.");
             numOfRouters = 0;
+            maxRouterNum = 0;
             manualEntryCounter++;
         }
     }
@@ -80,24 +80,27 @@ public class NodeFactory {
     public void RestartFileRead() throws IOException {
         System.out.print("Please input the name of the cost input file: ");
         fileName = sysIn.readLine();
+        numOfRouters = 0;
         lineCount = 0;
         manualEntryCounter = 0;
         ValidateTopoTxt();
     }
 
-    public void ValidateRouterNums() {
+    public void ValidateRouterNums() throws IOException{
         int routerOne = 0;
         int routerTwo = 0;
         int cost = 0;
         for (int i = 0; i < 3; i++) {
             int currentNum = numsInLine[i];
             if (i < 2) {
+                if(currentNum > maxRouterNum){
+                    maxRouterNum = currentNum;
+                }
                 if ((currentNum > numOfRouters - 1) || (currentNum < 0)) {
                     System.out.println("Invalid router value " + currentNum + " at line " + lineCount);
-                    manualEntryCounter++;
+                    RestartFileRead();
                     break;
                 } else {
-                    topoRegisters.add(currentNum);
                     if (i == 0) {
                         routerOne = currentNum;
                     } else {
