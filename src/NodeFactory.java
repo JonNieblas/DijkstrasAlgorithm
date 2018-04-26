@@ -58,12 +58,7 @@ public class NodeFactory {
                 ExtractNumsInLine(currentLine);
                 ValidateRouterNums();
             }
-            if(!topoRegisters.contains(numOfRouters-1)){
-                System.out.println(numOfRouters);
-                System.out.println("Router number exceeds max number of routers in the file.");
-                numOfRouters = 0;
-                manualEntryCounter++;
-            }
+            IncorrectUserGivenRegisters();
             if (manualEntryCounter > 0) {
                 RestartFileRead();
             }
@@ -71,6 +66,14 @@ public class NodeFactory {
         } catch (FileNotFoundException ex) {
             System.out.println(fileName + " does not exist.");
             RestartFileRead();
+        }
+    }
+
+    public void IncorrectUserGivenRegisters(){
+        if(!topoRegisters.contains(numOfRouters-1)){
+            System.out.println("Router number exceeds max number of routers in the file.");
+            numOfRouters = 0;
+            manualEntryCounter++;
         }
     }
 
