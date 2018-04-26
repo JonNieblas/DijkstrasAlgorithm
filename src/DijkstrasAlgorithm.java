@@ -1,8 +1,15 @@
 import java.util.*;
 
+/**
+ * Class DijkstrasAlgorithm handles the sorting of N', Y',
+ * D(i) and p(i) for each node, as well as the printing of
+ * the forwarding table.
+ *
+ * Jonathan Nieblas
+ */
 public class DijkstrasAlgorithm {
 
-    NodeFactory nodes;
+    private NodeFactory nodes;
     private int numOfNodes;
     private int[][] costMatrix;
     private Set pathsKnown;//N'
@@ -10,6 +17,7 @@ public class DijkstrasAlgorithm {
     private HashMap<Integer, Integer> currentPathCostMatrix;//D(i)
     private HashMap<Integer, Integer> predecessorNodeMatrix;//p(i)
     private HashMap<Integer, String> edgeHistory = new HashMap<>();
+    private Deque<String> currentPathNodes;
 
     public DijkstrasAlgorithm(NodeFactory nodes){
         this.nodes = nodes;
@@ -100,8 +108,23 @@ public class DijkstrasAlgorithm {
     }
 
     public void BuildForwardingTable(){
+        System.out.println("");
+        System.out.printf("%s %10s", "Destination", "Link");
         for(int destinationNode = 1; destinationNode < numOfNodes; destinationNode++){
+            int predecessor = predecessorNodeMatrix.get(destinationNode);
+            currentPathNodes = new LinkedList<>();
+            currentPathNodes.addFirst("V" + destinationNode);
+            currentPathNodes.addFirst("V" + predecessor);
+            PredecessorNodesOfAdjacent(predecessor, currentPathNodes);
+            System.out.printf("\n%6s            %-10s", "V" + destinationNode, currentPathNodes.toString());
+        }
+    }
 
+    public void PredecessorNodesOfAdjacent(int predecessorNode, Deque<String> currentPathNodes){
+        if(predecessorNode > 0){
+            int predecessor = predecessorNodeMatrix.get(predecessorNode);
+            currentPathNodes.addFirst("V" + predecessor);
+            PredecessorNodesOfAdjacent(predecessor, currentPathNodes);
         }
     }
 }

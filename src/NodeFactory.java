@@ -1,4 +1,13 @@
 import java.io.*;
+import java.util.ArrayList;
+
+/**
+ * Class NodeFactory builds a matrix of nodes and
+ * their edge costs from topo.txt, or whichever file
+ * contains the cost information.
+ *
+ * Jonathan Nieblas
+ */
 
 public class NodeFactory {
 
@@ -9,10 +18,14 @@ public class NodeFactory {
     private int manualEntryCounter = 0;
     private String fileName = "topo.txt";
     private int[][] costMatrix;
+    private ArrayList<Integer> topoRegisters;
 
-    public NodeFactory(int numFromUser) {
-        this.numOfRouters = numFromUser;
-        this.costMatrix = new int[numFromUser][numFromUser];
+    public void CreateMatrix() throws IOException{
+        while(numOfRouters < 2){
+            System.out.println("Please enter the number of routers (must be >= 2): ");
+            numOfRouters = Integer.parseInt(sysIn.readLine());
+        }
+        costMatrix = new int[numOfRouters][numOfRouters];
     }
 
     public void ExtractNumsInLine(String line) {
@@ -33,6 +46,8 @@ public class NodeFactory {
         try {
             FileReader fileReader = new FileReader(fileName);
             BufferedReader bufferedReader = new BufferedReader(fileReader);
+            CreateMatrix();
+            topoRegisters = new ArrayList<>();
             String currentLine;
             while ((currentLine = bufferedReader.readLine()) != null) {
                 if (manualEntryCounter > 0) {
@@ -42,6 +57,12 @@ public class NodeFactory {
                 lineCount++;
                 ExtractNumsInLine(currentLine);
                 ValidateRouterNums();
+            }
+            if(!topoRegisters.contains(numOfRouters-1)){
+                System.out.println(numOfRouters);
+                System.out.println("Router number exceeds max number of routers in the file.");
+                numOfRouters = 0;
+                manualEntryCounter++;
             }
             if (manualEntryCounter > 0) {
                 RestartFileRead();
@@ -73,6 +94,7 @@ public class NodeFactory {
                     manualEntryCounter++;
                     break;
                 } else {
+                    topoRegisters.add(currentNum);
                     if (i == 0) {
                         routerOne = currentNum;
                     } else {
